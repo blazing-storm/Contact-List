@@ -32,39 +32,7 @@ app.get('/new', function (req, res) {
     });
 });
 
-app.post('/create-contact', function (req, res) {
-    // Using database now
-    console.log(req.url);
-
-    // Not working Properly, need more time!!!
-    // try {
-    //     //check if the new email exits already, if yes, return without adding
-    //     Contact.find({email: req.body.email}, function(err, contacts) {
-    //         if(err) {
-    //             console.log('Adding new contact');
-    //         }
-    //         else {
-    //             console.log("Cannot add the same email again");
-    //             throw "-1";
-    //         }
-    //     });
-
-    //     //check if the new phone exits already, if yes, return without adding
-    //     Contact.find({phone: req.body.phone}, function(err, contacts) {
-    //         if(err) {
-    //             console.log('Adding new contact');
-    //         }
-    //         else {
-    //             console.log("Cannot add the same phone number again");
-    //             throw "-1";
-    //         }
-    //     });
-    // }
-    // catch (e){
-    //     console.log("ERROR:" + e.toString());
-    //     return res.redirect('/');
-    // }
-
+function addContact(req) {
     Contact.create({
         name: req.body.name,
         phone: req.body.phone,
@@ -75,8 +43,28 @@ app.post('/create-contact', function (req, res) {
             return;
         }
         console.log(newContact);
-        return res.redirect('/');
     })
+}
+
+app.post('/create-contact', function (req, res) {
+    // Using database now
+    console.log(req.url);
+
+    //check if the new email or phone number exits already, if yes, return without adding
+    Contact.find({$or:[{'email': req.body.email}, {'phone': req.body.phone}]}, function(err, docs) {
+        if(err) {
+            console.log('Error while finding');
+        }
+        if(docs.length == 0) {
+            console.log('Adding new contact');
+            addContact(req);
+        }
+        else {
+            console.log("Phone or Email already exists! Can't add new contact.");
+        }
+    });
+
+    return res.redirect('/');
 });
 
 // for deleting a contact
