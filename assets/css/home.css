@@ -1,0 +1,13 @@
+body {
+    margin: 0;
+    font-family: sans-serif;
+    height: 100vh;
+    background: #CCFFCC;
+    padding-top: 5%;
+}
+
+caption {
+    display: table-caption;
+    text-align: center;
+    font-weight: bold;
+}
