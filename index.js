@@ -32,11 +32,11 @@ app.get('/new', function (req, res) {
     });
 });
 
-function addContact(req) {
+function addContact(contact) {
     Contact.create({
-        name: req.body.name,
-        phone: req.body.phone,
-        email: req.body.email
+        name: contact.name,
+        phone: contact.phone,
+        email: contact.email
     }, function(err, newContact) {
         if(err) {
             console.log('Error in creating a contact');
@@ -50,14 +50,14 @@ app.post('/create-contact', function (req, res) {
     // Using database now
     console.log(req.url);
 
-    //check if the new email or phone number exits already, if yes, return without adding
+    //check if the new email or phone number exists already, if yes, return without adding
     Contact.find({$or:[{'email': req.body.email}, {'phone': req.body.phone}]}, function(err, docs) {
         if(err) {
             console.log('Error while finding');
         }
         if(docs.length == 0) {
             console.log('Adding new contact');
-            addContact(req);
+            addContact(req.body);
         }
         else {
             console.log("Phone or Email already exists! Can't add new contact.");
